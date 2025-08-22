@@ -1,85 +1,72 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { CLAN_TAG, API_BASE } from "../config";
 
-const API_BASE = "https://coc-backend-eqfx.onrender.com";
+const COLORS = ["#4CAF50", "#F44336"];
 
 export default function ClanWarsPage() {
-  const [tag, setTag] = useState("");
-  const [warlog, setWarlog] = useState(null);
+  const [warlog, setWarlog] = useState([]);
   const [currentWar, setCurrentWar] = useState(null);
-  const [rounds, setRounds] = useState(null);
 
-  const fetchWarlog = async () => {
-    const res = await fetch(`${API_BASE}/clan/${tag}/warlog`);
-    setWarlog(await res.json());
-  };
+  useEffect(() => {
+    async function fetchWars() {
+      const [warlogRes, currentWarRes] = await Promise.all([
+        fetch(`${API_BASE}/clan/${CLAN_TAG}/warlog`),
+        fetch(`${API_BASE}/clan/${CLAN_TAG}/currentwar`),
+      ]);
+      setWarlog((await warlogRes.json()).items || []);
+      setCurrentWar(await currentWarRes.json());
+    }
+    fetchWars();
+  }, []);
 
-  const fetchCurrentWar = async () => {
-    const res = await fetch(`${API_BASE}/clan/${tag}/currentwar`);
-    setCurrentWar(await res.json());
-  };
-
-  const fetchRounds = async () => {
-    const res = await fetch(`${API_BASE}/clan/${tag}/rounds`);
-    setRounds(await res.json());
-  };
+  const warData = warlog.length
+    ? [
+        {
+          name: "Wins",
+          value: warlog.filter((w) => w.result === "win").length,
+        },
+        {
+          name: "Losses",
+          value: warlog.filter((w) => w.result === "lose").length,
+        },
+      ]
+    : [];
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Clan Wars</h1>
+      <h1 className="text-3xl font-bold mb-6 animate-fadeIn">Clan Wars</h1>
 
-      <input
-        type="text"
-        placeholder="Enter clan tag (e.g. 2PP)"
-        value={tag}
-        onChange={(e) => setTag(e.target.value)}
-        className="border p-2 mr-2"
-      />
-
-      <div className="flex gap-2 mt-2">
-        <button
-          onClick={fetchWarlog}
-          className="bg-blue-600 text-white px-4 py-2"
-        >
-          War Log
-        </button>
-        <button
-          onClick={fetchCurrentWar}
-          className="bg-green-600 text-white px-4 py-2"
-        >
-          Current War
-        </button>
-        <button
-          onClick={fetchRounds}
-          className="bg-purple-600 text-white px-4 py-2"
-        >
-          CWL Rounds
-        </button>
-      </div>
-
-      {warlog && (
-        <div className="mt-4">
-          <h2 className="font-semibold">War Log</h2>
-          <pre className="bg-gray-200 p-4 rounded">
-            {JSON.stringify(warlog, null, 2)}
-          </pre>
+      {warData.length > 0 && (
+        <div className="mb-6 h-64 animate-fadeIn">
+          <h3 className="font-semibold mb-2">War Log Summary</h3>
+          <ResponsiveContainer>
+            <PieChart>
+              <Pie
+                data={warData}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={100}
+                label
+              >
+                {warData.map((entry, index) => (
+                  <Cell key={index} fill={COLORS[index]} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
         </div>
       )}
 
       {currentWar && (
-        <div className="mt-4">
-          <h2 className="font-semibold">Current War</h2>
-          <pre className="bg-gray-200 p-4 rounded">
-            {JSON.stringify(currentWar, null, 2)}
-          </pre>
-        </div>
-      )}
-
-      {rounds && (
-        <div className="mt-4">
-          <h2 className="font-semibold">CWL Rounds</h2>
-          <pre className="bg-gray-200 p-4 rounded">
-            {JSON.stringify(rounds, null, 2)}
-          </pre>
+        <div className="bg-white p-4 shadow rounded animate-pulseShadow mb-4 hover:shadow-lg transition-shadow duration-300">
+          <h3 className="font-semibold mb-2">Current War</h3>
+          <p>State: {currentWar.state}</p>
+          <p>Team Size: {currentWar.teamSize}</p>
+          <p>Preparation Start: {currentWar.preparationStartTime}</p>
         </div>
       )}
     </div>
