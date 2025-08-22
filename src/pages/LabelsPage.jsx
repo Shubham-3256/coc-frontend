@@ -1,35 +1,34 @@
-// src/pages/LabelsPage.jsx
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
-const API =
-  import.meta.env.VITE_API_URL || "https://coc-backend-eqfx.onrender.com";
+const API_URL = "https://coc-backend-eqfx.onrender.com";
 
-function LabelsPage() {
+export default function LabelsPage() {
   const [clanLabels, setClanLabels] = useState([]);
   const [playerLabels, setPlayerLabels] = useState([]);
 
   useEffect(() => {
-    fetch(`${API}/labels/clans`)
+    fetch(`${API_URL}/labels/clans`)
       .then((res) => res.json())
       .then((data) => setClanLabels(data.items || []));
-    fetch(`${API}/labels/players`)
+
+    fetch(`${API_URL}/labels/players`)
       .then((res) => res.json())
       .then((data) => setPlayerLabels(data.items || []));
   }, []);
 
   return (
     <div>
-      <h2 className="text-2xl mb-4">🏷️ Labels</h2>
+      <h1 className="text-2xl mb-4">Labels</h1>
 
-      <h3 className="text-xl font-bold mt-4">Clan Labels</h3>
-      <ul className="list-disc pl-5">
+      <h2 className="text-xl mt-4">Clan Labels</h2>
+      <ul>
         {clanLabels.map((l) => (
           <li key={l.id}>{l.name}</li>
         ))}
       </ul>
 
-      <h3 className="text-xl font-bold mt-4">Player Labels</h3>
-      <ul className="list-disc pl-5">
+      <h2 className="text-xl mt-4">Player Labels</h2>
+      <ul>
         {playerLabels.map((l) => (
           <li key={l.id}>{l.name}</li>
         ))}
@@ -37,5 +36,3 @@ function LabelsPage() {
     </div>
   );
 }
-
-export default LabelsPage;
