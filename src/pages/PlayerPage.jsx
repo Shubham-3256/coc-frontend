@@ -2,90 +2,83 @@ import { useState, useEffect } from "react";
 import {
   LineChart,
   Line,
-  XAxis,
-  YAxis,
-  Tooltip,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
 } from "recharts";
-import { CLAN_TAG, API_BASE } from "../config";
+import { API_BASE } from "../config";
 
-export default function PlayerPage() {
-  const [members, setMembers] = useState([]);
-  const [playersData, setPlayersData] = useState({});
+const COLORS = ["#22c55e", "#ef4444", "#3b82f6", "#f59e0b"];
+
+export default function PlayerPage({ playerTag }) {
+  const [player, setPlayer] = useState(null);
 
   useEffect(() => {
-    async function fetchMembers() {
-      const res = await fetch(`${API_BASE}/clan/${CLAN_TAG}/members`);
-      const membersList = (await res.json()).items || [];
-      setMembers(membersList);
-
-      const data = {};
-      await Promise.all(
-        membersList.map(async (m) => {
-          const pRes = await fetch(
-            `${API_BASE}/player/${m.tag.replace("#", "")}`
-          );
-          data[m.tag] = await pRes.json();
-        })
+    async function fetchPlayer() {
+      const res = await fetch(
+        `${API_BASE}/player/${encodeURIComponent(playerTag)}`
       );
-      setPlayersData(data);
+      setPlayer(await res.json());
     }
-    fetchMembers();
-  }, []);
+    fetchPlayer();
+  }, [playerTag]);
+
+  if (!player) return <p className="text-gray-400">⏳ Loading Player...</p>;
+
+  const donationsData = [
+    { name: "Donations", value: player.donations },
+    { name: "Received", value: player.donationsReceived },
+  ];
+
+  const trophyHistory = Array.from({ length: 7 }).map((_, i) => ({
+    day: i + 1,
+    trophies: player.trophies - Math.floor(Math.random() * 50),
+  }));
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6 animate-fadeIn">Players Stats</h1>
+    <div className="coc-container">
+      <h1 className="coc-title">👤 {player.name}</h1>
 
-      {members.map((m) => {
-        const player = playersData[m.tag];
-        if (!player) return null;
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="coc-card h-72">
+          <h3 className="coc-subtitle">🏆 Trophy History</h3>
+          <ResponsiveContainer>
+            <LineChart data={trophyHistory}>
+              <Line
+                type="monotone"
+                dataKey="trophies"
+                stroke="#f59e0b"
+                strokeWidth={2}
+                dot={false}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
 
-        const trophyHistory = Array.from({ length: 7 }).map((_, i) => ({
-          day: `Day ${i + 1}`,
-          trophies: player.trophies - Math.floor(Math.random() * 50),
-        }));
-
-        return (
-          <div
-            key={m.tag}
-            className="mb-6 p-4 bg-white shadow rounded hover:shadow-lg transition-shadow duration-300 animate-fadeIn"
-          >
-            <h2 className="font-bold">
-              {player.name} (TH {player.townHallLevel})
-            </h2>
-            <p>Trophies: {player.trophies}</p>
-            <p>League: {player.league?.name || "N/A"}</p>
-
-            {player.troops?.length > 0 && (
-              <div className="grid grid-cols-3 gap-2 mt-2">
-                {player.troops.map((t) => (
-                  <div key={t.name} className="p-2 border rounded bg-gray-100">
-                    <p className="font-semibold">{t.name}</p>
-                    <p>Level: {t.level}</p>
-                  </div>
+        <div className="coc-card h-72">
+          <h3 className="coc-subtitle">📤 Donations</h3>
+          <ResponsiveContainer>
+            <PieChart>
+              <Pie
+                data={donationsData}
+                cx="50%"
+                cy="50%"
+                innerRadius={50}
+                outerRadius={90}
+                paddingAngle={5}
+                dataKey="value"
+              >
+                {donationsData.map((_, index) => (
+                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
                 ))}
-              </div>
-            )}
-
-            <div className="mt-4 h-40">
-              <ResponsiveContainer>
-                <LineChart data={trophyHistory}>
-                  <XAxis dataKey="day" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="trophies"
-                    stroke="#FFD700"
-                    strokeWidth={3}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        );
-      })}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,47 +1,29 @@
 import { useState, useEffect } from "react";
-import { API_BASE } from "../config";
+import { CLAN_TAG, API_BASE } from "../config";
 
 export default function LabelsPage() {
-  const [clanLabels, setClanLabels] = useState([]);
-  const [playerLabels, setPlayerLabels] = useState([]);
+  const [labels, setLabels] = useState([]);
 
   useEffect(() => {
     async function fetchLabels() {
-      const [clansRes, playersRes] = await Promise.all([
-        fetch(`${API_BASE}/labels/clans`),
-        fetch(`${API_BASE}/labels/players`),
-      ]);
-      setClanLabels((await clansRes.json()).items || []);
-      setPlayerLabels((await playersRes.json()).items || []);
+      const res = await fetch(`${API_BASE}/clan/${CLAN_TAG}`);
+      const data = await res.json();
+      setLabels(data.labels || []);
     }
     fetchLabels();
   }, []);
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6 animate-fadeIn">Labels</h1>
-
-      <h2 className="text-xl font-semibold mb-2">Clan Labels</h2>
-      <div className="flex flex-wrap gap-2 mb-4">
-        {clanLabels.map((label) => (
-          <div
-            key={label.id}
-            className="px-3 py-1 bg-yellow-200 rounded animate-fadeIn"
+    <div className="coc-container">
+      <h1 className="coc-title">🏷️ Clan Labels</h1>
+      <div className="flex flex-wrap gap-3">
+        {labels.map((l) => (
+          <span
+            key={l.id}
+            className="coc-badge bg-gray-800 text-gray-200 hover:bg-gray-700"
           >
-            {label.name}
-          </div>
-        ))}
-      </div>
-
-      <h2 className="text-xl font-semibold mb-2">Player Labels</h2>
-      <div className="flex flex-wrap gap-2">
-        {playerLabels.map((label) => (
-          <div
-            key={label.id}
-            className="px-3 py-1 bg-green-200 rounded animate-fadeIn"
-          >
-            {label.name}
-          </div>
+            {l.name}
+          </span>
         ))}
       </div>
     </div>

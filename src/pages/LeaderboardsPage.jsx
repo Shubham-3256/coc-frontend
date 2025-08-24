@@ -1,4 +1,12 @@
 import { useState, useEffect } from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import { CLAN_TAG, API_BASE } from "../config";
 
 export default function LeaderboardsPage() {
@@ -8,34 +16,39 @@ export default function LeaderboardsPage() {
     async function fetchMembers() {
       const res = await fetch(`${API_BASE}/clan/${CLAN_TAG}/members`);
       const data = (await res.json()).items || [];
-      setMembers(data.sort((a, b) => b.trophies - a.trophies));
+      data.sort((a, b) => b.trophies - a.trophies);
+      setMembers(data);
     }
     fetchMembers();
   }, []);
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6 animate-fadeIn">
-        Clan Leaderboard
-      </h1>
-      <table className="w-full border-collapse border border-gray-300 animate-fadeIn">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="border px-4 py-2">Rank</th>
-            <th className="border px-4 py-2">Name</th>
-            <th className="border px-4 py-2">Trophies</th>
-          </tr>
-        </thead>
-        <tbody>
-          {members.map((m, idx) => (
-            <tr key={m.tag} className="hover:bg-gray-50">
-              <td className="border px-4 py-2">{idx + 1}</td>
-              <td className="border px-4 py-2">{m.name}</td>
-              <td className="border px-4 py-2">{m.trophies}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="coc-container">
+      <h1 className="coc-title">🏆 Leaderboards</h1>
+      <div className="coc-card h-[500px]">
+        <ResponsiveContainer>
+          <BarChart
+            layout="vertical"
+            data={members.map((m) => ({ name: m.name, trophies: m.trophies }))}
+          >
+            <XAxis type="number" stroke="#aaa" />
+            <YAxis
+              dataKey="name"
+              type="category"
+              width={100}
+              stroke="#aaa"
+              tick={{ fontSize: 12 }}
+            />
+            <Tooltip />
+            <Bar
+              dataKey="trophies"
+              fill="#f59e0b"
+              radius={[0, 5, 5, 0]}
+              barSize={15}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }

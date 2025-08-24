@@ -1,64 +1,115 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  NavLink,
-} from "react-router-dom";
+import { useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+
 import ClanPage from "./pages/ClanPage";
-import PlayerPage from "./pages/PlayerPage";
+import ClanWarsPage from "./pages/ClanWarsPage";
+import GoldPassPage from "./pages/GoldPassPage";
+import LabelsPage from "./pages/LabelsPage";
 import LeaderboardsPage from "./pages/LeaderboardsPage";
 import LeaguesPage from "./pages/LeaguesPage";
-import LabelsPage from "./pages/LabelsPage";
-import GoldPassPage from "./pages/GoldPassPage";
-import ClanWarsPage from "./pages/ClanWarsPage";
+import PlayerPage from "./pages/PlayerPage";
+
+import {
+  FaUsers,
+  FaBattleNet,
+  FaMedal,
+  FaTags,
+  FaCrown,
+  FaTrophy,
+  FaUser,
+  FaBars,
+  FaTimes,
+} from "react-icons/fa";
 
 export default function App() {
-  const navItems = [
-    { name: "Clan", path: "/clan" },
-    { name: "Players", path: "/player" },
-    { name: "Leaderboards", path: "/leaderboards" },
-    { name: "Leagues", path: "/leagues" },
-    { name: "Labels", path: "/labels" },
-    { name: "Gold Pass", path: "/goldpass" },
-    { name: "Clan Wars", path: "/clanwars" },
-  ];
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <Router>
-      <div className="flex flex-col min-h-screen">
-        <nav className="bg-blue-600 text-white px-6 py-4 flex justify-between items-center shadow-md">
-          <h1 className="text-2xl font-bold">CoC Clan Dashboard</h1>
-          <ul className="flex gap-4">
-            {navItems.map((item) => (
-              <li key={item.path}>
-                <NavLink
-                  to={item.path}
-                  className={({ isActive }) =>
-                    isActive
-                      ? "font-bold border-b-2 border-white pb-1"
-                      : "hover:underline"
-                  }
-                >
-                  {item.name}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        </nav>
+      <div className="min-h-screen flex flex-col bg-[#0f172a] text-gray-200">
+        {/* Navbar */}
+        <header className="bg-[#1e293b] border-b border-gray-700">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              {/* Logo */}
+              <Link
+                to="/"
+                className="text-xl font-bold text-white flex items-center gap-2"
+              >
+                ⚔️ CoC Dashboard
+              </Link>
 
-        <main className="flex-1 bg-gray-100 text-gray-900 p-6 transition-all duration-500 animate-fadeIn">
+              {/* Desktop Menu */}
+              <nav className="hidden md:flex space-x-6">
+                <NavLink to="/" icon={<FaUsers />} label="Clan" />
+                <NavLink to="/wars" icon={<FaBattleNet />} label="Wars" />
+                <NavLink to="/goldpass" icon={<FaMedal />} label="Gold Pass" />
+                <NavLink to="/labels" icon={<FaTags />} label="Labels" />
+                <NavLink
+                  to="/leaderboards"
+                  icon={<FaCrown />}
+                  label="Leaderboards"
+                />
+                <NavLink to="/leagues" icon={<FaTrophy />} label="Leagues" />
+                <NavLink to="/player" icon={<FaUser />} label="Player" />
+              </nav>
+
+              {/* Mobile Hamburger */}
+              <button
+                className="md:hidden text-gray-300 hover:text-white"
+                onClick={() => setMenuOpen(!menuOpen)}
+              >
+                {menuOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Dropdown */}
+          {menuOpen && (
+            <div className="md:hidden bg-[#1e293b] border-t border-gray-700 px-4 py-3 space-y-3">
+              <NavLink to="/" icon={<FaUsers />} label="Clan" />
+              <NavLink to="/wars" icon={<FaBattleNet />} label="Wars" />
+              <NavLink to="/goldpass" icon={<FaMedal />} label="Gold Pass" />
+              <NavLink to="/labels" icon={<FaTags />} label="Labels" />
+              <NavLink
+                to="/leaderboards"
+                icon={<FaCrown />}
+                label="Leaderboards"
+              />
+              <NavLink to="/leagues" icon={<FaTrophy />} label="Leagues" />
+              <NavLink to="/player" icon={<FaUser />} label="Player" />
+            </div>
+          )}
+        </header>
+
+        {/* Main Content */}
+        <main className="flex-1 overflow-y-auto p-6 max-w-7xl mx-auto w-full">
           <Routes>
-            <Route path="/clan" element={<ClanPage />} />
-            <Route path="/player" element={<PlayerPage />} />
+            <Route path="/" element={<ClanPage />} />
+            <Route path="/wars" element={<ClanWarsPage />} />
+            <Route path="/goldpass" element={<GoldPassPage />} />
+            <Route path="/labels" element={<LabelsPage />} />
             <Route path="/leaderboards" element={<LeaderboardsPage />} />
             <Route path="/leagues" element={<LeaguesPage />} />
-            <Route path="/labels" element={<LabelsPage />} />
-            <Route path="/goldpass" element={<GoldPassPage />} />
-            <Route path="/clanwars" element={<ClanWarsPage />} />
-            <Route path="*" element={<ClanPage />} />
+            <Route
+              path="/player"
+              element={<PlayerPage playerTag="#PLAYER_TAG" />}
+            />
           </Routes>
         </main>
       </div>
     </Router>
+  );
+}
+
+function NavLink({ to, icon, label }) {
+  return (
+    <Link
+      to={to}
+      className="flex items-center gap-2 text-gray-300 hover:text-white transition font-medium"
+    >
+      <span className="text-sm">{icon}</span>
+      <span>{label}</span>
+    </Link>
   );
 }

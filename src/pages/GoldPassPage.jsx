@@ -1,35 +1,50 @@
 import { useState, useEffect } from "react";
-import { API_BASE } from "../config";
+import { CLAN_TAG, API_BASE } from "../config";
 
 export default function GoldPassPage() {
-  const [goldPass, setGoldPass] = useState(null);
+  const [pass, setPass] = useState(null);
 
   useEffect(() => {
-    async function fetchGoldPass() {
-      const res = await fetch(`${API_BASE}/goldpass/current`);
-      setGoldPass(await res.json());
+    async function fetchPass() {
+      const res = await fetch(`${API_BASE}/clan/${CLAN_TAG}/goldpass`);
+      setPass(await res.json());
     }
-    fetchGoldPass();
+    fetchPass();
   }, []);
 
+  if (!pass) return <p className="text-gray-400">⏳ Loading Gold Pass…</p>;
+
+  const progress = pass.progress || 0;
+
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6 animate-fadeIn">Gold Pass</h1>
-      {goldPass && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {goldPass.items?.map((item, idx) => (
-            <div
-              key={idx}
-              className="p-4 bg-white shadow rounded hover:shadow-lg transition-shadow duration-300 animate-fadeIn"
-            >
-              <h3 className="font-semibold">{item.name}</h3>
-              <p>Tier: {item.tier}</p>
-              <p>Type: {item.type}</p>
-              <p>Reward Claimed: {item.isRewardClaimed ? "Yes" : "No"}</p>
-            </div>
-          ))}
-        </div>
-      )}
+    <div className="coc-container">
+      <h1 className="coc-title">🥇 Gold Pass Progress</h1>
+
+      <div className="coc-card flex flex-col items-center justify-center h-80">
+        <svg className="w-40 h-40 transform -rotate-90">
+          <circle
+            cx="80"
+            cy="80"
+            r="70"
+            stroke="#333"
+            strokeWidth="10"
+            fill="none"
+          />
+          <circle
+            cx="80"
+            cy="80"
+            r="70"
+            stroke="#facc15"
+            strokeWidth="10"
+            strokeDasharray={440}
+            strokeDashoffset={440 - (progress / 100) * 440}
+            strokeLinecap="round"
+            fill="none"
+          />
+        </svg>
+        <p className="text-2xl font-bold mt-4">{progress}%</p>
+        <p className="text-gray-400">Season Progress</p>
+      </div>
     </div>
   );
 }
