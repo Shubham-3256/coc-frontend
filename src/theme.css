@@ -126,7 +126,7 @@
   background: #f9fafb;
 }
 
-/* ================== Badge ================== */
+/* ================= Badge ================== */
 .coc-badge {
   display: inline-block;
   padding: 0.25rem 0.6rem;
@@ -136,7 +136,3 @@
   background: #f3f4f6;
   color: #374151;
 }
-
-
-
-
