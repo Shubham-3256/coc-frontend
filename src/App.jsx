@@ -3,11 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 import ClanPage from "./pages/ClanPage";
 import ClanWarsPage from "./pages/ClanWarsPage";
-import GoldPassPage from "./pages/GoldPassPage";
-import LabelsPage from "./pages/LabelsPage";
 import LeaderboardsPage from "./pages/LeaderboardsPage";
-import LeaguesPage from "./pages/LeaguesPage";
-import PlayerPage from "./pages/PlayerPage";
+import ClanMembersPage from "./pages/ClanMembersPage"; // ✅ new merged page
 
 import {
   FaUsers,
@@ -16,7 +13,6 @@ import {
   FaTags,
   FaCrown,
   FaTrophy,
-  FaUser,
   FaBars,
   FaTimes,
 } from "react-icons/fa";
@@ -43,15 +39,12 @@ export default function App() {
               <nav className="hidden md:flex space-x-6">
                 <NavLink to="/" icon={<FaUsers />} label="Clan" />
                 <NavLink to="/wars" icon={<FaBattleNet />} label="Wars" />
-                <NavLink to="/goldpass" icon={<FaMedal />} label="Gold Pass" />
-                <NavLink to="/labels" icon={<FaTags />} label="Labels" />
                 <NavLink
                   to="/leaderboards"
                   icon={<FaCrown />}
                   label="Leaderboards"
                 />
-                <NavLink to="/leagues" icon={<FaTrophy />} label="Leagues" />
-                <NavLink to="/player" icon={<FaUser />} label="Player" />
+                <NavLink to="/members" icon={<FaTrophy />} label="Members" />
               </nav>
 
               {/* Mobile Hamburger */}
@@ -69,15 +62,12 @@ export default function App() {
             <div className="md:hidden bg-[#1e293b] border-t border-gray-700 px-4 py-3 space-y-3">
               <NavLink to="/" icon={<FaUsers />} label="Clan" />
               <NavLink to="/wars" icon={<FaBattleNet />} label="Wars" />
-              <NavLink to="/goldpass" icon={<FaMedal />} label="Gold Pass" />
-              <NavLink to="/labels" icon={<FaTags />} label="Labels" />
               <NavLink
                 to="/leaderboards"
                 icon={<FaCrown />}
                 label="Leaderboards"
               />
-              <NavLink to="/leagues" icon={<FaTrophy />} label="Leagues" />
-              <NavLink to="/player" icon={<FaUser />} label="Player" />
+              <NavLink to="/members" icon={<FaTrophy />} label="Members" />
             </div>
           )}
         </header>
@@ -87,14 +77,8 @@ export default function App() {
           <Routes>
             <Route path="/" element={<ClanPage />} />
             <Route path="/wars" element={<ClanWarsPage />} />
-            <Route path="/goldpass" element={<GoldPassPage />} />
-            <Route path="/labels" element={<LabelsPage />} />
             <Route path="/leaderboards" element={<LeaderboardsPage />} />
-            <Route path="/leagues" element={<LeaguesPage />} />
-            <Route
-              path="/player"
-              element={<PlayerPage playerTag="#PLAYER_TAG" />}
-            />
+            <Route path="/members" element={<ClanMembersPage />} />
           </Routes>
         </main>
       </div>

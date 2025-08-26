@@ -21,6 +21,31 @@ const ROLE_COLOR = {
   member: "Member",
 };
 
+// Emoji Animation Component
+function AnimatedEmoji({ children, type = "bounce", className = "" }) {
+  let animationClass = "animate-bounce"; // default
+
+  switch (type) {
+    case "pulse":
+      animationClass = "animate-pulse";
+      break;
+    case "spin":
+      animationClass = "animate-spin";
+      break;
+    case "float":
+      animationClass = "animate-float";
+      break;
+    default:
+      animationClass = "animate-bounce";
+  }
+
+  return (
+    <span className={`inline-block ${animationClass} ${className}`}>
+      {children}
+    </span>
+  );
+}
+
 // TH colors mapping
 const TH_COLOR = {
   1: "bg-gray-500 text-white",
@@ -92,7 +117,9 @@ export default function LeaderboardsPage() {
 
   return (
     <div className="coc-container">
-      <h1 className="coc-title animate-fadeIn">🏆 Leaderboards</h1>
+      <h1 className="coc-title animate-fadeIn">
+        <AnimatedEmoji type="bounce">🏆</AnimatedEmoji> Leaderboards
+      </h1>
 
       {/* Controls */}
       <div className="flex flex-col sm:flex-row gap-2 mb-4 sm:items-center sm:justify-between flex-wrap">
@@ -113,7 +140,6 @@ export default function LeaderboardsPage() {
           <option value="name">Sort by Name</option>
         </select>
 
-        {/* Quick Filters */}
         <div className="flex gap-2 flex-wrap">
           <select
             value={roleFilter}
@@ -185,7 +211,6 @@ export default function LeaderboardsPage() {
               tick={{ fontSize: 12 }}
             />
 
-            {/* Tooltip */}
             <Tooltip
               content={({ payload }) => {
                 if (!payload || !payload.length) return null;
@@ -231,10 +256,6 @@ export default function LeaderboardsPage() {
               <LabelList
                 dataKey="trophies"
                 position="right"
-                formatter={(value, name, props) => {
-                  const rank = props?.payload?.rank ?? value;
-                  return `${value}`;
-                }}
                 style={{ fill: "#facc15", fontWeight: "bold", fontSize: 12 }}
               />
             </Bar>
@@ -243,7 +264,6 @@ export default function LeaderboardsPage() {
       </div>
 
       {/* Mini Sparkline Cards */}
-      {/* Mini Sparkline Cards - Grid Layout */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
         {paginatedMembers.map((m, index) => {
           const rank = index + 1 + (currentPage - 1) * itemsPerPage;
@@ -268,7 +288,12 @@ export default function LeaderboardsPage() {
               {/* Member Header */}
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-semibold text-gray-200 truncate flex items-center gap-1">
-                  {m.name} {rankBadge && <span>{rankBadge}</span>}
+                  {m.name}{" "}
+                  {rankBadge && (
+                    <AnimatedEmoji type={rank === 1 ? "bounce" : "float"}>
+                      {rankBadge}
+                    </AnimatedEmoji>
+                  )}
                 </span>
                 <span
                   className={`text-xs font-bold px-2 py-1 rounded-full ${
@@ -307,8 +332,12 @@ export default function LeaderboardsPage() {
 
               {/* Mini Stats */}
               <div className="flex justify-between text-xs text-gray-400 mt-1">
-                <span>🏆 {m.trophies}</span>
-                <span>📤 {m.donations}</span>
+                <span>
+                  <AnimatedEmoji type="pulse">🏆</AnimatedEmoji> {m.trophies}
+                </span>
+                <span>
+                  <AnimatedEmoji type="pulse">📤</AnimatedEmoji> {m.donations}
+                </span>
               </div>
             </div>
           );

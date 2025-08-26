@@ -77,6 +77,13 @@ function HalfComparisonBar({
     </div>
   );
 }
+function BouncingEmoji({ children, className = "" }) {
+  return (
+    <span className={`text-3xl animate-bounce inline-block ${className}`}>
+      {children}
+    </span>
+  );
+}
 
 export default function ClanPage() {
   const [clan, setClan] = useState(null);
@@ -154,7 +161,8 @@ export default function ClanPage() {
               </div>
 
               <div className="flex flex-col items-center bg-gradient-to-br from-blue-500/10 to-blue-700/10 p-4 rounded-xl shadow-inner hover:scale-105 transition">
-                <div className="text-3xl">👥</div>
+                <BouncingEmoji>👥</BouncingEmoji>
+
                 <p className="font-bold text-xl text-blue-400">
                   {clan.members}
                 </p>
@@ -162,7 +170,7 @@ export default function ClanPage() {
               </div>
 
               <div className="flex flex-col items-center bg-gradient-to-br from-emerald-500/10 to-emerald-700/10 p-4 rounded-xl shadow-inner hover:scale-105 transition">
-                <div className="text-3xl">🏆</div>
+                <BouncingEmoji>🏆</BouncingEmoji>
                 <p className="font-bold text-xl text-emerald-400">
                   {clan.clanPoints}
                 </p>
@@ -170,7 +178,7 @@ export default function ClanPage() {
               </div>
 
               <div className="flex flex-col items-center bg-gradient-to-br from-purple-500/10 to-purple-700/10 p-4 rounded-xl shadow-inner hover:scale-105 transition">
-                <div className="text-3xl">⚔️</div>
+                <BouncingEmoji>⚔️</BouncingEmoji>
                 <p className="font-bold text-sm text-purple-400 text-center">
                   {clan.warFrequency}
                 </p>
