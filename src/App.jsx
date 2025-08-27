@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-
+import JoinClanPage from "./pages/JoinClanPage";
 import ClanPage from "./pages/ClanPage";
 import ClanWarsPage from "./pages/ClanWarsPage";
 import LeaderboardsPage from "./pages/LeaderboardsPage";
@@ -15,6 +15,7 @@ import {
   FaTrophy,
   FaBars,
   FaTimes,
+  FaPen
 } from "react-icons/fa";
 
 export default function App() {
@@ -45,6 +46,7 @@ export default function App() {
                   label="Leaderboards"
                 />
                 <NavLink to="/members" icon={<FaTrophy />} label="Members" />
+                <NavLink to="/apply" icon={<FaPen />} label="Join Clan" />
               </nav>
 
               {/* Mobile Hamburger */}
@@ -68,6 +70,7 @@ export default function App() {
                 label="Leaderboards"
               />
               <NavLink to="/members" icon={<FaTrophy />} label="Members" />
+              <NavLink to="/apply" icon={<FaPen />} label="Join Clan" />
             </div>
           )}
         </header>
@@ -79,6 +82,7 @@ export default function App() {
             <Route path="/wars" element={<ClanWarsPage />} />
             <Route path="/leaderboards" element={<LeaderboardsPage />} />
             <Route path="/members" element={<ClanMembersPage />} />
+            <Route path="/apply" element={<JoinClanPage />} />
           </Routes>
         </main>
       </div>
